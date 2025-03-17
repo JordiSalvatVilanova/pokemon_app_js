@@ -1,0 +1,12 @@
+#main-container{
+    display:flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+
+.card{
+    width: 200px;
+    background-color: orange;
+}
