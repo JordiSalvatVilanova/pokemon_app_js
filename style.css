@@ -5,12 +5,54 @@ body {
     margin: 0;
     padding: 0;
     background-color: #cfecff;
+    max-width: 1700px;
 }
 
 #title-logo{
+    padding-top: 10px;
     width: 40vh;
 }
 
+hr {
+    border: 0;
+    height: 1px; /* Altura de la línea */
+    background: linear-gradient(to right, transparent, blue, transparent); /* Efecto de desvanecimiento */
+    width: 100%; /* Ancho completo */
+}
+
+/* ------------------------------------------------------------------------------------------------------ */
+#type-checkboxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(183px, 1fr)); /* Ajusta el ancho mínimo */
+    gap: 20px;
+    max-width: 1200px; /* Limita el ancho total */
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.type {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* Espacio entre la imagen y el texto */
+    min-width: 50px; /* Asegura suficiente espacio para la imagen y el texto */
+    padding: 0px;
+    background-color: #ffde5a;
+    border: solid 1px blue;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.type img {
+    width: 32px; /* Ajusta el tamaño del ícono */
+    height: auto;
+}
+
+.hidden-checkbox {
+    display: none;
+}
+
+/* ------------------------------------------------------------------------------------------------------ */
 #main-container {
     display: flex;
     justify-content: space-evenly;
@@ -30,6 +72,7 @@ body {
     text-align: center;
     border: 2px solid blue;
     transition: transform 0.3s;
+    cursor: pointer;
 }
 
 .card:hover {
@@ -48,11 +91,9 @@ body {
 .name{
     align-self: center;
     margin: 0;
+    /* font-size: large; */
 }
 
-/* .show{
-    align-self: flex-end;
-} */
 .pagination {
     margin: 0px;
 }

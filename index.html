@@ -4,15 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokemons</title>
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Pok%C3%A9_Ball_icon.svg/2052px-Pok%C3%A9_Ball_icon.svg.png">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <img id="title-logo" src="https://imgs.search.brave.com/1DmS_78_vJ0YM5-XHlz0lmSFbCPC9gEJEx4SvrPTiVs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly8xMDAw/bWFyY2FzLm5ldC93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyMC8w/MS9Mb2dvLVBva2Vt/b24tNTAweDMxMy5w/bmc" alt="">
+    <!-- Imagenes_de_tipos: -->
+    <!-- https://pokemongo.fandom.com/es/wiki/Categor%C3%ADa:Im%C3%A1genes_de_tipos -->
+     <!-- logo titulo pokemon -->
+    <!-- https://imgs.search.brave.com/1DmS_78_vJ0YM5-XHlz0lmSFbCPC9gEJEx4SvrPTiVs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly8xMDAw/bWFyY2FzLm5ldC93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyMC8w/MS9Mb2dvLVBva2Vt/b24tNTAweDMxMy5w/bmc -->
+    <img id="title-logo" src="./img/Logo-Pokemon.png" alt="">
+
+    <hr>
 
     <div id="type-checkboxes">
-        <!-- Los checkboxes de tipo se insertarán aquí dinámicamente -->
+        <label class="type">
+            <img src="./img/Type_Normal.webp" alt="">
+            <input type="checkbox" id="normal" class="hidden-checkbox">
+            Normal
+        </label>
+        <label class="type">
+            <img src="./img/Type_Lucha.webp" alt="">
+            <input type="checkbox" id="fighting" class="hidden-checkbox">
+            Lucha
+        </label>
+        <label class="type">
+            <img src="./img/Type_Volador.webp" alt="">
+            <input type="checkbox" id="flying" class="hidden-checkbox">
+            Volador
+        </label>
+        <label class="type">
+            <img src="./img/Type_Veneno.webp" alt="">
+            <input type="checkbox" id="poison" class="hidden-checkbox">
+            Veneno
+        </label>
+        <label class="type">
+            <img src="./img/Type_Tierra.webp" alt="">
+            <input type="checkbox" id="ground" class="hidden-checkbox">
+            Tierra
+        </label>
+        <label class="type">
+            <img src="./img/Type_Roca.webp" alt="">
+            <input type="checkbox" id="rock" class="hidden-checkbox">
+            Roca
+        </label>
+        <label class="type">
+            <img src="./img/Type_Bicho.webp" alt="">
+            <input type="checkbox" id="bug" class="hidden-checkbox">
+            Bicho
+        </label>
+        <label class="type">
+            <img src="./img/Type_Fantasma.webp" alt="">
+            <input type="checkbox" id="ghost" class="hidden-checkbox">
+            Fantasma
+        </label>
+        <label class="type">
+            <img src="./img/Type_Acero.webp" alt="">
+            <input type="checkbox" id="steel" class="hidden-checkbox">
+            Acero
+        </label>
+        <label class="type">
+            <img src="./img/Type_Fuego.webp" alt="">
+            <input type="checkbox" id="fire" class="hidden-checkbox">
+            Fuego
+        </label>
+        <label class="type">
+            <img src="./img/Type_Agua.webp" alt="">
+            <input type="checkbox" id="water" class="hidden-checkbox">
+            Agua
+        </label>
+        <label class="type">
+            <img src="./img/Type_Planta.webp" alt="">
+            <input type="checkbox" id="grass" class="hidden-checkbox">
+            Planta
+        </label>
+        <label class="type">
+            <img src="./img/Type_Electrico.webp" alt="">
+            <input type="checkbox" id="electric" class="hidden-checkbox">
+            Eléctrico
+        </label>
+        <label class="type">
+            <img src="./img/Type_Psiquico.webp" alt="">
+            <input type="checkbox" id="psychic" class="hidden-checkbox">
+            Psíquico
+        </label>
+        <label class="type">
+            <img src="./img/Type_Hielo.webp" alt="">
+            <input type="checkbox" id="ice" class="hidden-checkbox">
+            Hielo
+        </label>
+        <label class="type">
+            <img src="./img/Type_Dragon.webp" alt="">
+            <input type="checkbox" id="dragon" class="hidden-checkbox">
+            Dragón
+        </label>
+        <label class="type">
+            <img src="./img/Type_Siniestro.webp" alt="">
+            <input type="checkbox" id="dark" class="hidden-checkbox">
+            Siniestro
+        </label>
+        <label class="type">
+            <img src="./img/Type_Hada.webp" alt="">
+            <input type="checkbox" id="fairy" class="hidden-checkbox">
+            Hada
+        </label>                  
     </div>
-    
+
+    <hr>
         <!-- Controles de paginación -->
         <div class="pagination">
             <button id="prev" disabled>Anterior</button>
