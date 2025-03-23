@@ -112,3 +112,60 @@ button:disabled {
     background-color: gray;
     cursor: not-allowed;
 }
+/* ------------------------------------------------------------------------------------------------------ */
+
+.search-container {
+    position: relative;
+    display: inline-block;
+}
+
+#search {
+    width: 300px;
+    padding: 10px 40px 10px 15px; /* Ajustamos padding para dar espacio a la Pokéball */
+    border: 3px solid #3c5aa6;
+    border-radius: 25px;
+    font-size: 14px;
+    outline: none;
+    transition: 0.3s;
+}
+
+#search:focus {
+    border-color: #ffcb05;
+    box-shadow: 0px 0px 10px rgba(255, 203, 5, 0.8);
+}
+
+.pokeball {
+    position: absolute;
+    right: 50px; /* Para dejar espacio para la cruz */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 25px;
+    pointer-events: none; /* Evita que la imagen interfiera con la escritura */
+}
+
+/* Estilos para el botón de la cruz */
+.clear-btn {
+    position: absolute;
+    right: 0px; /* Ajustamos la posición a la derecha */
+    top: 50%;
+    transform: translateY(-55%);
+    font-size: 48px;
+    color: #3c5aa6;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.clear-btn:hover {
+    color: #ffcb05;
+}
+
+/* suggestions--------------------------------------------------------------------------------------- */
+/* Establecer el max-height y el desbordamiento en el menú de autocompletado */
+.ui-autocomplete {
+    max-height: 175px; /* Ajusta el valor según lo necesites */
+    overflow-y: auto;  /* Agrega una barra de desplazamiento si el contenido excede la altura máxima */
+    overflow-x:hidden;
+}
+/* ------------------------------------------------------------------------------------------------------ */

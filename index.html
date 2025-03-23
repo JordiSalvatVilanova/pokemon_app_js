@@ -15,6 +15,13 @@
     <img id="title-logo" src="./img/Logo-Pokemon.png" alt="">
 
     <hr>
+    <div class="search-container">
+        <input id="search" type="text" placeholder="Buscar Pokémon...">
+        <img class="pokeball" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Poké_Ball_icon.svg" alt="Pokeball">
+        <!-- Icono de cruz para borrar -->
+        <button id="clear-btn" class="clear-btn" style="display:none;">&times;</button>
+    </div>
+    
 
     <div id="type-checkboxes">
         <label class="type">
@@ -111,15 +118,20 @@
 
     <hr>
         <!-- Controles de paginación -->
-        <div class="pagination">
+        <!-- <div class="pagination">
             <button id="prev" disabled>Anterior</button>
             <span id="page-info">Página 1</span>
             <button id="next">Siguiente</button>
-        </div>
+        </div> -->
     <div id="main-container"></div>
     
 
 
+    <!-- Incluye jQuery y jQuery UI -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    
     <script src="./main.js"></script>
 </body>
 </html>
