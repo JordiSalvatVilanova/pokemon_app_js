@@ -42,6 +42,8 @@ async function fetchPokemonBatch(startId, endId) {
             id: correspondingId,
             nombre: data.name,
             imagen: data.sprites.front_default || DEFAULT_IMAGE,
+            animacion: data.sprites.versions["generation-v"]["black-white"].animated.front_default || data.sprites.front_default || DEFAULT_IMAGE,
+            sonido: data.cries.latest,
             tipos: data.types.map(typeInfo => typeInfo.type.name),
             base_experience: data.base_experience,
             height: data.height,
@@ -60,6 +62,16 @@ async function fetchPokemonBatch(startId, endId) {
         correspondingId++;
     });
 }
+
+let userInteracted = false; // Variable para saber si el usuario interactuó
+
+// Detectar cuando el usuario interactúa con la página (clic, tecla, scroll)
+document.addEventListener("click", () => userInteracted = true);
+document.addEventListener("keydown", () => userInteracted = true);
+document.addEventListener("scroll", () => userInteracted = true);
+document.addEventListener("mouseover", () => userInteracted = true);
+document.addEventListener("mouseout", () => userInteracted = true);
+
 
 // Función para renderizar los Pokémon en la interfaz
 async function renderPokemon() {
@@ -88,6 +100,26 @@ async function renderPokemon() {
         card.appendChild(img);
         card.appendChild(num);
         main.appendChild(card);
+
+         // 🎵 Agregar evento para reproducir sonido al pasar el mouse
+         card.addEventListener("click", () => {
+            if (pokemon.sonido && userInteracted) {
+                let audio = new Audio(pokemon.sonido);
+                audio.play();
+            }
+        });
+
+        card.addEventListener("mouseover", function() {
+            if (pokemon.animacion && userInteracted) {
+                img.src = pokemon.animacion;  // Cambia la imagen a GIF
+            }
+        });
+
+        card.addEventListener("mouseout", function() {
+            if (pokemon.imagen && userInteracted) {
+                img.src = pokemon.imagen;  // Vuelve a la imagen estática
+            }
+        });
     });
     
     currentIndex = end; // Actualizar el índice actual
@@ -125,6 +157,11 @@ function filterByType() {
 
     document.getElementById("main-container").innerHTML = ""; // Limpiar la vista
     currentIndex = 0;
+
+    //Limpiamos input
+    cleanTextInput();
+    showOrHiddenCross();
+
     renderPokemon(); // Renderizar nuevamente
 }
 
@@ -136,23 +173,27 @@ function searchByName() {
 
     // Obtener solo los nombres para el autocompletado
     let suggestionsList = filteredPokemonList.filter(pokemon => pokemon.nombre.toLowerCase().startsWith(input.value.toLowerCase())).map(pokemon => pokemon.nombre);
+    
+    if (suggestionsList.length > 0) {
+        // Aplicar jQuery UI Autocomplete
+        $("#search").autocomplete({
+            source: suggestionsList,
+            select: function(event, ui) {
+                // Cuando se selecciona una sugerencia, filtrar y mostrar el Pokémon correspondiente
+                let selectedPokemonName = ui.item.value; // El nombre seleccionado
 
-    // Aplicar jQuery UI Autocomplete
-    $("#search").autocomplete({
-        source: suggestionsList,
-        select: function(event, ui) {
-            // Cuando se selecciona una sugerencia, filtrar y mostrar el Pokémon correspondiente
-            let selectedPokemonName = ui.item.value; // El nombre seleccionado
+                // Filtrar el Pokémon seleccionado
+                filteredPokemonList = pokemonList.filter(pokemon => pokemon.nombre === selectedPokemonName);
 
-            // Filtrar el Pokémon seleccionado
-            filteredPokemonList = pokemonList.filter(pokemon => pokemon.nombre === selectedPokemonName);
-
-            // Limpiar y renderizar solo el Pokémon seleccionado
-            document.getElementById("main-container").innerHTML = ""; // Limpiar la vista
-            currentIndex = 0;
-            renderPokemon(); // Renderizar nuevamente el Pokémon seleccionado
-        }
-    }); 
+                // Limpiar y renderizar solo el Pokémon seleccionado
+                document.getElementById("main-container").innerHTML = ""; // Limpiar la vista
+                currentIndex = 0;
+                renderPokemon(); // Renderizar nuevamente el Pokémon seleccionado
+            }
+        });
+    } else {
+        $("#search").autocomplete("destroy"); // Eliminar si no hay sugerencias
+    } 
 
     document.getElementById("main-container").innerHTML = ""; // Limpiar la vista
     currentIndex = 0;
@@ -163,19 +204,27 @@ const clearBtn = document.getElementById("clear-btn");
 
 // Mostrar o esconder la cruz según el contenido del input
 input.addEventListener("input", function() {
+    showOrHiddenCross();
+});
+
+function showOrHiddenCross(){
     if (input.value.trim() !== "") {
         clearBtn.style.display = "block"; // Mostrar la cruz si hay texto
     } else {
         clearBtn.style.display = "none"; // Ocultar la cruz si no hay texto
     }
-});
+}
 
 // Borrar el texto del input al hacer clic en la cruz
 clearBtn.addEventListener("click", function() {
-    input.value = ""; // Limpiar el valor del input
-    clearBtn.style.display = "none"; // Ocultar la cruz
+    cleanTextInput();
+    input.focus();//para que se vuelva a poner el marcador en el input
     searchByName(); // Volver a filtrar Pokémon (opcional, si quieres actualizar la lista cuando se borra)
 });
 
+function cleanTextInput() {
+    input.value = ""; // Limpiar el valor del input
+    clearBtn.style.display = "none"; // Ocultar la cruz
+}
 // Iniciar la carga de datos
 fetchPokemonData();

@@ -59,6 +59,8 @@ hr {
     flex-wrap: wrap;
     gap: 20px;
     padding: 20px;
+    /* width: 90%;
+    margin: auto; */
 }
 
 .card {
@@ -79,9 +81,19 @@ hr {
     transform: scale(1.05);
 }
 
-.card img {
+/* .card img {
     width: 100px;
+    height: 100px;
+    object-fit: contain;
+    transform: scale(1.9); 
+} */
+
+.card img {
+    width: auto;
+    height: 96px;
+    object-fit: cover; 
 }
+
 
 .num{
     margin: 0;
