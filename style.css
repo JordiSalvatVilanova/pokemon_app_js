@@ -1,7 +1,6 @@
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    background-color: #f8f9fa;
     margin: 0;
     padding: 0;
     background-color: #cfecff;
@@ -180,4 +179,65 @@ button:disabled {
     overflow-y: auto;  /* Agrega una barra de desplazamiento si el contenido excede la altura máxima */
     overflow-x:hidden;
 }
-/* ------------------------------------------------------------------------------------------------------ */
+/* RESPONSIVE-------------------------------------------------------------------------------------- */
+ /* Haciendo el semáforo responsive con media queries */
+ @media (max-width: 1024px) {
+    /* body{
+        background-color: rgb(255, 255, 179)
+    } */
+
+    #title-logo {
+        width: 35vh;
+    }
+    
+    #search{
+        padding: 5px 40px 5px 15px;
+    }
+
+    .clear-btn {
+        transform: translateY(-57%);
+        font-size: 38px;
+    }
+    #type-checkboxes{
+        grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); /* Ajusta el ancho mínimo */
+    }
+    .type {
+        gap: 6px;
+    }
+}
+@media (max-width: 425px) {
+    /* body{
+        background-color: rgb(255, 182, 182);
+    } */
+
+    #title-logo {
+        width: 30vh;
+    }
+
+    #search {
+        width: 250px;
+    }
+    #type-checkboxes{
+        grid-template-columns: repeat(auto-fit, minmax(94px, 1fr)); /* Ajusta el ancho mínimo */
+        font-size: smaller;
+    }
+}
+
+
+@media (max-width: 372px) {
+    /* body{
+        background-color: rgb(255, 108, 108);
+    } */
+
+    #search {
+        width: 221px;
+    }
+
+    #type-checkboxes{
+        grid-template-columns: repeat(auto-fit, minmax(54px, 1fr)); /* Ajusta el ancho mínimo */
+    }
+
+    label span{
+        display: none;
+    }
+}
