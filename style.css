@@ -78,6 +78,7 @@ hr {
 
 .card:hover {
     transform: scale(1.05);
+    image-rendering: pixelated;
 }
 
 /* .card img {

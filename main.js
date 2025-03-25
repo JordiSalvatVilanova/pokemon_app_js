@@ -24,7 +24,29 @@ async function fetchPokemonData() {
 
     console.log("Todos los Pokémon cargados.", pokemonList);
     filteredPokemonList = [...pokemonList]; // Inicializar la lista filtrada con todos los Pokémon
-    renderPokemon(); // Renderizar los Pokémon en la interfaz
+    // 🔁 Comprobamos si hay un ID desde el que venimos
+    const lastViewedId = sessionStorage.getItem("lastViewedId");
+
+    if (lastViewedId) {
+        const index = filteredPokemonList.findIndex(p => p.id === parseInt(lastViewedId));
+        currentIndex = index + 1; // Renderizar hasta ese
+        renderPokemon();
+
+        // Scroll automático
+        setTimeout(() => {
+            const targetCard = [...document.querySelectorAll(".card")]
+                .find(card => card.querySelector(".num")?.textContent === `#${lastViewedId}`);
+
+            if (targetCard) {
+                targetCard.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+
+            sessionStorage.removeItem("lastViewedId");
+        }, 500);
+    } else {
+        currentIndex = 20; // comportamiento por defecto
+        renderPokemon();
+    }
 }
 
 // Función para obtener un rango de Pokémon desde la API
@@ -76,8 +98,14 @@ document.addEventListener("mouseout", () => userInteracted = true);
 // Función para renderizar los Pokémon en la interfaz
 async function renderPokemon() {
     let main = document.getElementById("main-container");
-    let end = currentIndex + itemsPerLoad;
-    let paginatedPokemons = filteredPokemonList.slice(currentIndex, end);
+
+    let end = currentIndex;
+    let start = main.children.length; // Esto sirve para paginar automáticamente
+
+    // Si no hay nada renderizado todavía, arranca desde 0
+    if (start === 0) start = 0;
+
+    let paginatedPokemons = filteredPokemonList.slice(start, end);
     
     paginatedPokemons.forEach(pokemon => {
         let card = document.createElement("div");
@@ -89,6 +117,12 @@ async function renderPokemon() {
 
         let img = document.createElement("img");
         img.src = pokemon.imagen;
+        // Pre-cargar animación en segundo plano
+        if (pokemon.animacion && pokemon.animacion !== pokemon.imagen) {
+            const preload = new Image();
+            preload.src = pokemon.animacion;
+        }
+
         img.alt = pokemon.nombre;
 
         let name = document.createElement("p");
@@ -101,11 +135,15 @@ async function renderPokemon() {
         card.appendChild(num);
         main.appendChild(card);
 
-         // 🎵 Agregar evento para reproducir sonido al pasar el mouse
+
          card.addEventListener("click", () => {
             if (pokemon.sonido && userInteracted) {
-                let audio = new Audio(pokemon.sonido);
-                audio.play();
+                // 📦Guardar los datos del Pokémon en sessionStorage
+                sessionStorage.setItem("lastViewedId", pokemon.id);
+                sessionStorage.setItem("selectedPokemon", JSON.stringify(pokemon));
+                
+                // 🔀Redirigir a la página de stats
+                window.location.href = "stats.html";
             }
         });
 
@@ -122,7 +160,8 @@ async function renderPokemon() {
         });
     });
     
-    currentIndex = end; // Actualizar el índice actual
+    // Actualizar currentIndex solo si estamos en carga infinita
+    currentIndex = end + itemsPerLoad;
 }
 
 // Detectar el scroll para cargar más Pokémon automáticamente
