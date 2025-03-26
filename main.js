@@ -38,8 +38,10 @@ async function fetchPokemonData() {
 
         const savedTypes = sessionStorage.getItem("activeTypes");
         const savedSearch = sessionStorage.getItem("searchText");
-        if (savedSearch != null) {
+        if (savedSearch != null && savedSearch.trim() !== "") {
             input.value = savedSearch;
+            input.focus(); // 👉 Cursor activo dentro del input
+            showOrHiddenCross(); // 👉 hace que aparezca la cruz si hay texto
             filteredPokemonList = filteredPokemonList.filter(pokemon =>
                 pokemon.nombre.toLowerCase().includes(savedSearch)
             );
@@ -68,12 +70,12 @@ async function fetchPokemonData() {
             const index = filteredPokemonList.findIndex(p => p.id === parseInt(lastViewedId));
 
             // ⚠️ Detectar si hay filtros activos (tipo o texto)
-            if (savedTypes !="[]" && savedSearch == null || savedTypes =="[]" && savedSearch != null) {
-                // 👣 Solo mostrar hasta el Pokémon que se había tocado
-                currentIndex = index + 1;
-            } else {
+            if (savedTypes !="[]" && savedSearch == null || savedSearch.trim() == "" || savedTypes =="[]" && savedSearch != null && savedSearch.trim() !== "") {
                 // 🔁 Mostrar todos los Pokémon que coinciden con el filtro
                 currentIndex = filteredPokemonList.length;
+            } else {
+                // 👣 Solo mostrar hasta el Pokémon que se había tocado
+                currentIndex = index + 1;
             }
 
             renderPokemon();
@@ -332,6 +334,7 @@ checkboxes.forEach(checkbox => {
 
 // Función para filtrar Pokémon por tipo
 function filterByType() {
+    
     let selectedTypes = Array.from(checkboxes)
         .filter(checkbox => checkbox.checked)
         .map(checkbox => checkbox.id);
@@ -349,6 +352,8 @@ function filterByType() {
 
     document.getElementById("main-container").innerHTML = ""; // Limpiar la vista
     currentIndex = itemsPerLoad;
+
+    sessionStorage.removeItem("searchText"); // elimina la clave del todo
 
     //Limpiamos input
     cleanTextInput();
@@ -383,6 +388,8 @@ function searchByName() {
                 // Cuando se selecciona una sugerencia, filtrar y mostrar el Pokémon correspondiente
                 let selectedPokemonName = ui.item.value; // El nombre seleccionado
 
+                sessionStorage.setItem("searchText", selectedPokemonName.trim().toLowerCase());
+                
                 // Filtrar el Pokémon seleccionado
                 filteredPokemonList = pokemonList.filter(pokemon => pokemon.nombre === selectedPokemonName);
 
