@@ -1,7 +1,16 @@
-let pokemonList = []; // Lista completa de Pokémon
-let filteredPokemonList = []; // Lista filtrada según los tipos seleccionados
-const itemsPerLoad = 20; // Número de Pokémon que se cargan por cada renderizado
-let currentIndex = 0; // Índice actual de la paginación
+if (window.__POKEMON_APP_INITIALIZED__) {
+    console.warn("Script ja inicialitzat. Possible doble càrrega!");
+    throw new Error("Evitem doble execució de main.js");
+}
+window.__POKEMON_APP_INITIALIZED__ = true;
+
+
+// Solo definir si no está definido aún
+window.pokemonList = window.pokemonList || [];// Lista completa de Pokémon
+window.filteredPokemonList = window.filteredPokemonList || [];// Lista filtrada según los tipos seleccionados
+window.itemsPerLoad = window.itemsPerLoad || 20;// Número de Pokémon que se cargan por cada renderizado
+window.currentIndex = window.currentIndex || 0;// Índice actual de la paginación
+
 
 const DEFAULT_IMAGE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png"; // Imagen por defecto si no hay disponible
 const typeIcons = {
@@ -70,7 +79,7 @@ async function fetchPokemonData() {
             const index = filteredPokemonList.findIndex(p => p.id === parseInt(lastViewedId));
 
             // ⚠️ Detectar si hay filtros activos (tipo o texto)
-            if (savedTypes !="[]" && savedSearch == null || savedSearch.trim() == "" || savedTypes =="[]" && savedSearch != null && savedSearch.trim() !== "") {
+            if (savedTypes !="[]" && (savedSearch == null || savedSearch.trim() == "") || savedTypes =="[]" && (savedSearch != null && savedSearch.trim() !== "")) {
                 // 🔁 Mostrar todos los Pokémon que coinciden con el filtro
                 currentIndex = filteredPokemonList.length;
             } else {
@@ -183,13 +192,31 @@ async function fetchPokemonBatch(startId, endId) {
     let pokemonPromises = ids.map(id => fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then(res => res.json()));
     let pokemonData = await Promise.all(pokemonPromises);
     
+
     // Procesar cada Pokémon y guardarlo en la lista
     pokemonData.forEach(data => {
+
+        let officialArtWork = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`;
+        let showdownFallback = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${data.id}.gif`;
+
         let pokemon = {
             id: correspondingId,
             nombre: data.name,
-            imagen: data.sprites.front_default || DEFAULT_IMAGE,
-            animacion: data.sprites.versions["generation-v"]["black-white"].animated.front_default || data.sprites.front_default || DEFAULT_IMAGE,
+            imagen: data.sprites.front_default || officialArtWork || DEFAULT_IMAGE,
+
+            animacion: data.sprites.versions?.["generation-v"]?.["black-white"]?.animated?.front_default 
+                        ? data.sprites.versions["generation-v"]["black-white"].animated.front_default
+                        : data.sprites.other?.showdown?.front_default 
+                            ? data.sprites.other.showdown.front_default
+                            : officialArtWork 
+                                ? officialArtWork
+                                : data.sprites.front_default 
+                                    ? data.sprites.front_default
+                                    : showdownFallback 
+                                        ? showdownFallback
+                                        : DEFAULT_IMAGE,
+
+
             sonido: data.cries.latest,
             tipos: data.types.map(typeInfo => typeInfo.type.name),
             base_experience: data.base_experience,
@@ -264,10 +291,16 @@ async function renderPokemon() {
         let img = document.createElement("img");
         img.classList.add("pokemon-image");
         img.src = pokemon.imagen;
+        img.onerror = () => {
+            img.src = DEFAULT_IMAGE;
+        };
         // Pre-cargar animación en segundo plano
         if (pokemon.animacion && pokemon.animacion !== pokemon.imagen) {
             const preload = new Image();
             preload.src = pokemon.animacion;
+            preload.onerror = () => {
+                preload.src = DEFAULT_IMAGE;
+            };
         }
 
         img.alt = pokemon.nombre;
@@ -305,14 +338,26 @@ async function renderPokemon() {
 
         card.addEventListener("mouseover", function() {
             if (pokemon.animacion && userInteracted) {
-                img.src = pokemon.animacion;  // Cambia la imagen a GIF
+                img.onerror = () => {
+                    if (img.src !== DEFAULT_IMAGE) {
+                        img.src = DEFAULT_IMAGE;
+                    }
+                };
+            
+                img.src = pokemon.animacion;
             }
+            
         });
 
         card.addEventListener("mouseout", function() {
-            if (pokemon.imagen && userInteracted) {
-                img.src = pokemon.imagen;  // Vuelve a la imagen estática
-            }
+            img.src = pokemon.imagen;
+
+            img.onerror = () => {
+                if (img.src !== DEFAULT_IMAGE) {
+                    img.src = DEFAULT_IMAGE;
+                }
+            };
+            
         });
     });
     

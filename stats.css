@@ -65,14 +65,20 @@ body {
 .pokemon-image-container {
     display: flex;
     justify-content: center;
+    align-items: center;
     padding-top: 63px;
+    min-height: 80px; /* ← DA ESPACIO para que imágenes pequeñas puedan crecer con scale */
 }
+
 
 #pokemon-image {
     cursor: pointer;
-    width: 96px;
-    transform: scale(2); 
+    transform: scale(4);
     image-rendering: pixelated;
+    max-height: 106px;
+    width: auto;
+    height: 45px;
+    max-width: 100%;
 }
 
 #pokemon-container {
@@ -80,7 +86,7 @@ body {
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     padding: 20px;
-    padding-top: 50px;
+    padding-top: 60px;
     padding-bottom: 30px;
     width: 400px;
     margin: 0 auto;
