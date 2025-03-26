@@ -4,9 +4,100 @@ const itemsPerLoad = 20; // Número de Pokémon que se cargan por cada renderiza
 let currentIndex = 0; // Índice actual de la paginación
 
 const DEFAULT_IMAGE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png"; // Imagen por defecto si no hay disponible
+const typeIcons = {
+    normal: "./img/Type_Normal.webp",
+    fighting: "./img/Type_Lucha.webp",
+    flying: "./img/Type_Volador.webp",
+    poison: "./img/Type_Veneno.webp",
+    ground: "./img/Type_Tierra.webp",
+    rock: "./img/Type_Roca.webp",
+    bug: "./img/Type_Bicho.webp",
+    ghost: "./img/Type_Fantasma.webp",
+    steel: "./img/Type_Acero.webp",
+    fire: "./img/Type_Fuego.webp",
+    water: "./img/Type_Agua.webp",
+    grass: "./img/Type_Planta.webp",
+    electric: "./img/Type_Electrico.webp",
+    psychic: "./img/Type_Psiquico.webp",
+    ice: "./img/Type_Hielo.webp",
+    dragon: "./img/Type_Dragon.webp",
+    dark: "./img/Type_Siniestro.webp",
+    fairy: "./img/Type_Hada.webp"
+};
+
+const checkboxes = document.querySelectorAll(".type input");
 
 // Función principal para obtener los datos de los Pokémon
 async function fetchPokemonData() {
+    const cachedData = localStorage.getItem("pokemonData");
+
+    if (cachedData) {
+        console.log("✅ Cargando Pokémon desde localStorage...");
+        pokemonList = JSON.parse(cachedData);
+        filteredPokemonList = [...pokemonList];
+
+        const savedTypes = sessionStorage.getItem("activeTypes");
+        const savedSearch = sessionStorage.getItem("searchText");
+        if (savedSearch != null) {
+            input.value = savedSearch;
+            filteredPokemonList = filteredPokemonList.filter(pokemon =>
+                pokemon.nombre.toLowerCase().includes(savedSearch)
+            );
+        }
+
+        if (savedTypes != "[]") {
+            const activeTypeList = JSON.parse(savedTypes);
+
+            if (activeTypeList != null) {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = activeTypeList.includes(checkbox.id);
+                    checkbox.closest("label").style.backgroundColor = checkbox.checked ? "lightgreen" : "";
+                });
+
+                
+            filteredPokemonList = pokemonList.filter(pokemon =>
+                activeTypeList.every(type => pokemon.tipos.includes(type))
+            );
+            }
+
+        }
+
+        const lastViewedId = sessionStorage.getItem("lastViewedId");
+
+        if (lastViewedId) {
+            const index = filteredPokemonList.findIndex(p => p.id === parseInt(lastViewedId));
+
+            // ⚠️ Detectar si hay filtros activos (tipo o texto)
+            if (savedTypes !="[]" && savedSearch == null || savedTypes =="[]" && savedSearch != null) {
+                // 👣 Solo mostrar hasta el Pokémon que se había tocado
+                currentIndex = index + 1;
+            } else {
+                // 🔁 Mostrar todos los Pokémon que coinciden con el filtro
+                currentIndex = filteredPokemonList.length;
+            }
+
+            renderPokemon();
+            ensureScrollableContent();
+            setTimeout(() => {
+                const targetCard = [...document.querySelectorAll(".card")]
+                    .find(card => card.querySelector(".num")?.textContent === `#${lastViewedId}`);
+
+                if (targetCard) {
+                    targetCard.scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+
+                sessionStorage.removeItem("lastViewedId");
+            }, 500);
+        } else {
+            currentIndex = itemsPerLoad;
+            renderPokemon();
+            ensureScrollableContent();
+        }
+
+        return; // Salimos sin hacer fetch
+    }
+
+    // Si no hay datos cacheados, los traemos desde la API
     console.log("Obteniendo Pokémon con IDs 1 a 250...");
     await fetchPokemonBatch(1, 250);
 
@@ -22,17 +113,47 @@ async function fetchPokemonData() {
     console.log("Obteniendo Pokémon con IDs 10001 a 10277...");
     await fetchPokemonBatch(10001, 10277);
 
-    console.log("Todos los Pokémon cargados.", pokemonList);
-    filteredPokemonList = [...pokemonList]; // Inicializar la lista filtrada con todos los Pokémon
-    // 🔁 Comprobamos si hay un ID desde el que venimos
+    console.log("✅ Todos los Pokémon cargados desde API.");
+    filteredPokemonList = [...pokemonList];
+
+    // 👇 Insertar justo debajo
+    const savedTypes = sessionStorage.getItem("activeTypes");
+    if (savedTypes) {
+        const activeTypeList = JSON.parse(savedTypes);
+
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = activeTypeList.includes(checkbox.id);
+            checkbox.closest("label").style.backgroundColor = checkbox.checked ? "lightgreen" : "";
+        });
+
+        filteredPokemonList = pokemonList.filter(pokemon =>
+            activeTypeList.every(type => pokemon.tipos.includes(type))
+        );
+    }
+
+    // Guardamos en localStorage
+    localStorage.setItem("pokemonData", JSON.stringify(pokemonList));
+
     const lastViewedId = sessionStorage.getItem("lastViewedId");
 
     if (lastViewedId) {
         const index = filteredPokemonList.findIndex(p => p.id === parseInt(lastViewedId));
-        currentIndex = index + 1; // Renderizar hasta ese
-        renderPokemon();
 
-        // Scroll automático
+        // ⚠️ Detectar si hay filtros activos (tipo o texto)
+        const hasTypeFilter = sessionStorage.getItem("activeTypes");
+        const hasSearchText = sessionStorage.getItem("searchText");
+
+        if (hasTypeFilter || hasSearchText) {
+            // 🔁 Mostrar todos los Pokémon que coinciden con el filtro
+            currentIndex = filteredPokemonList.length;
+        } else {
+            // 👣 Solo mostrar hasta el Pokémon que se había tocado
+            currentIndex = index + 1;
+        }
+
+        renderPokemon();
+        ensureScrollableContent();
+
         setTimeout(() => {
             const targetCard = [...document.querySelectorAll(".card")]
                 .find(card => card.querySelector(".num")?.textContent === `#${lastViewedId}`);
@@ -44,10 +165,12 @@ async function fetchPokemonData() {
             sessionStorage.removeItem("lastViewedId");
         }, 500);
     } else {
-        currentIndex = 20; // comportamiento por defecto
+        currentIndex = itemsPerLoad;
         renderPokemon();
+        ensureScrollableContent();
     }
 }
+
 
 // Función para obtener un rango de Pokémon desde la API
 async function fetchPokemonBatch(startId, endId) {
@@ -111,11 +234,33 @@ async function renderPokemon() {
         let card = document.createElement("div");
         card.classList.add("card");
 
-        let num = document.createElement("p");
+        let num = document.createElement("div");
         num.classList.add("num");
-        num.innerText = `#${pokemon.id}`;
+
+        const numText = document.createElement("span");
+        numText.classList.add("poke-id");
+        numText.innerText = `#${pokemon.id}`;
+        num.appendChild(numText);
+
+        // Contenedor de tipos (alineado a la derecha)
+        const typesWrapper = document.createElement("div");
+        typesWrapper.classList.add("type-wrapper");
+
+        pokemon.tipos.forEach(tipo => {
+            const icon = document.createElement("img");
+            icon.src = typeIcons[tipo];
+            icon.alt = tipo;
+            icon.title = tipo;
+            icon.classList.add("type-icon");
+            typesWrapper.appendChild(icon);
+        });
+
+        num.appendChild(typesWrapper);
+
+
 
         let img = document.createElement("img");
+        img.classList.add("pokemon-image");
         img.src = pokemon.imagen;
         // Pre-cargar animación en segundo plano
         if (pokemon.animacion && pokemon.animacion !== pokemon.imagen) {
@@ -142,6 +287,15 @@ async function renderPokemon() {
                 sessionStorage.setItem("lastViewedId", pokemon.id);
                 sessionStorage.setItem("selectedPokemon", JSON.stringify(pokemon));
                 
+                // ✅ Guardar tipos activos
+                const selectedTypes = Array.from(checkboxes)
+                .filter(c => c.checked)
+                .map(c => c.id);
+                sessionStorage.setItem("activeTypes", JSON.stringify(selectedTypes));
+
+                // ✅ Guardar posición del scroll
+                sessionStorage.setItem("scrollY", window.scrollY.toString());
+
                 // 🔀Redirigir a la página de stats
                 window.location.href = "stats.html";
             }
@@ -172,7 +326,6 @@ window.addEventListener("scroll", () => {
 });
 
 // Capturar los checkboxes para filtrar por tipo
-const checkboxes = document.querySelectorAll(".type input");
 checkboxes.forEach(checkbox => {
     checkbox.addEventListener("change", filterByType);
 });
@@ -195,13 +348,14 @@ function filterByType() {
     );
 
     document.getElementById("main-container").innerHTML = ""; // Limpiar la vista
-    currentIndex = 0;
+    currentIndex = itemsPerLoad;
 
     //Limpiamos input
     cleanTextInput();
     showOrHiddenCross();
 
     renderPokemon(); // Renderizar nuevamente
+    ensureScrollableContent();
 }
 
 const input = document.getElementById("search")
@@ -212,7 +366,15 @@ function searchByName() {
 
     // Obtener solo los nombres para el autocompletado
     let suggestionsList = filteredPokemonList.filter(pokemon => pokemon.nombre.toLowerCase().startsWith(input.value.toLowerCase())).map(pokemon => pokemon.nombre);
-    
+    sessionStorage.setItem("searchText", input.value.trim().toLowerCase());
+
+    sessionStorage.setItem("activeTypes", "[]");
+    // ✅ También desmarcar los checkboxes y resetear estilos
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+        const label = checkbox.closest("label");
+        if (label) label.style.backgroundColor = '';
+    });
     if (suggestionsList.length > 0) {
         // Aplicar jQuery UI Autocomplete
         $("#search").autocomplete({
@@ -226,7 +388,7 @@ function searchByName() {
 
                 // Limpiar y renderizar solo el Pokémon seleccionado
                 document.getElementById("main-container").innerHTML = ""; // Limpiar la vista
-                currentIndex = 0;
+                currentIndex = itemsPerLoad;
                 renderPokemon(); // Renderizar nuevamente el Pokémon seleccionado
             }
         });
@@ -235,8 +397,9 @@ function searchByName() {
     } 
 
     document.getElementById("main-container").innerHTML = ""; // Limpiar la vista
-    currentIndex = 0;
+    currentIndex = itemsPerLoad;
     renderPokemon(); // Renderizar nuevamente
+    ensureScrollableContent();
 }
 
 const clearBtn = document.getElementById("clear-btn");
@@ -265,5 +428,13 @@ function cleanTextInput() {
     input.value = ""; // Limpiar el valor del input
     clearBtn.style.display = "none"; // Ocultar la cruz
 }
+
+function ensureScrollableContent() {
+    // Si la altura del contenido no supera la altura visible, renderizamos más
+    while (document.body.scrollHeight <= window.innerHeight + 100 && currentIndex < filteredPokemonList.length) {
+        renderPokemon();
+    }
+}
+
 // Iniciar la carga de datos
 fetchPokemonData();

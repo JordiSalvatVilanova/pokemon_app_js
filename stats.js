@@ -10,21 +10,24 @@ document.addEventListener("DOMContentLoaded", () => {
     let audio = new Audio(pokemonData.sonido);
     audio.play();
 
+    document.getElementById("pokemon-image").addEventListener("click", () => {
+        audio.play();
+    });
     document.getElementById("pokemon-number").innerText = `#${pokemonData.id}`;
     document.getElementById("pokemon-name").innerText = pokemonData.nombre;
     document.getElementById("pokemon-image").src = pokemonData.animacion || pokemonData.imagen;
 
     const statsContainer = document.getElementById("stats");
     statsContainer.innerHTML = `
-        <p><span>Experiencia Base:</span> <span>${pokemonData.base_experience}</span></p>
-        <p><span>Altura:</span> <span>${(pokemonData.height / 10).toFixed(2)} m</span></p>
-        <p><span>Peso:</span> <span>${(pokemonData.weight / 10).toFixed(2)} kg</span></p>
-        <p><span>Vida (HP):</span> <span>${pokemonData.stats.hp}</span></p>
-        <p><span>Ataque:</span> <span>${pokemonData.stats.attack}</span></p>
-        <p><span>Defensa:</span> <span>${pokemonData.stats.defense}</span></p>
-        <p><span>Ataque Especial:</span> <span>${pokemonData.stats.special_attack}</span></p>
-        <p><span>Defensa Especial:</span> <span>${pokemonData.stats.special_defense}</span></p>
-        <p><span>Velocidad:</span> <span>${pokemonData.stats.speed}</span></p>
+        <p class="stat exp"><span>Experiencia Base:</span> <span>${pokemonData.base_experience}</span></p>
+        <p class="stat"><span>Altura:</span> <span>${(pokemonData.height / 10).toFixed(2)} m</span></p>
+        <p class="stat"><span>Peso:</span> <span>${(pokemonData.weight / 10).toFixed(2)} kg</span></p>
+        <p class="stat hp"><span>PS:</span> <span>${pokemonData.stats.hp}</span></p>
+        <p class="stat atk"><span>Ataque:</span> <span>${pokemonData.stats.attack}</span></p>
+        <p class="stat def"><span>Defensa:</span> <span>${pokemonData.stats.defense}</span></p>
+        <p class="stat sp-atk"><span>Ataque Especial:</span> <span>${pokemonData.stats.special_attack}</span></p>
+        <p class="stat sp-def"><span>Defensa Especial:</span> <span>${pokemonData.stats.special_defense}</span></p>
+        <p class="stat spd"><span>Velocidad:</span> <span>${pokemonData.stats.speed}</span></p>
     `;
 
     // Función para volver atrás

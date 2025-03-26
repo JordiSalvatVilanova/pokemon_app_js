@@ -88,7 +88,7 @@ hr {
     transform: scale(1.9); 
 } */
 
-.card img {
+.pokemon-image {
     width: auto;
     height: 96px;
     object-fit: cover; 
@@ -180,6 +180,34 @@ button:disabled {
     overflow-y: auto;  /* Agrega una barra de desplazamiento si el contenido excede la altura máxima */
     overflow-x:hidden;
 }
+
+.num {
+    display: flex;
+    justify-content: space-between; /* Esto los separa */
+    align-items: center;
+    margin: 0;
+    padding: 0 4px;
+}
+
+.poke-id {
+    align-self: flex-end;
+}
+
+.type-wrapper {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.type-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+
+
+
 /* RESPONSIVE-------------------------------------------------------------------------------------- */
  /* Haciendo el semáforo responsive con media queries */
  @media (max-width: 1024px) {

@@ -20,9 +20,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0px 15px;
     background-color: #ffcb05;
-    padding: 12px;
+    padding: 12px 14%;
 }
 
 #pokemon-number{
@@ -70,10 +69,10 @@ body {
 }
 
 #pokemon-image {
+    cursor: pointer;
     width: 96px;
     transform: scale(2); 
     image-rendering: pixelated;
-    /* height: 125px; */
 }
 
 #pokemon-container {
@@ -106,6 +105,38 @@ h1 {
     font-size: 18px;
 }
 
+
+
+/* Colores stats------------------------------------------------------------------------- */
+.stat.hp span:last-child {
+    color: #FF5959;
+}
+
+.stat.atk span:last-child {
+    color: #F5AC78;
+}
+
+.stat.def span:last-child {
+    color: #FAE078;
+}
+
+.stat.sp-atk span:last-child {
+    color: #9DB7F5;
+}
+
+.stat.sp-def span:last-child {
+    color: #A7DB8D;
+}
+
+.stat.spd span:last-child {
+    color: #FA92B2;
+}
+
+.stat.exp span:last-child {
+    color: #AAAAAA;
+}
+/* ------------------------------------------------------------------------------------- */
+
 @media (max-width: 570px) {
     #container{
         /* background-color: yellow; */
@@ -114,10 +145,16 @@ h1 {
     body{
         background-color: #ffde5a;
     }
+
+    .header{
+        padding: 12px 8%;
+    }
+
     #pokemon-container {
         width: 100%;
         box-sizing: border-box;
     }
+    
 }
 
 @media (max-width: 458px) {
@@ -125,6 +162,11 @@ h1 {
         /* background-color: rgb(255, 182, 182); */
         /* border: none; */
     }
+
+    .header{
+        padding: 12px;
+    }
+
     #pokemon-container {
         width: 100%;
         box-sizing: border-box;
